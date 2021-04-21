@@ -1,0 +1,42 @@
+version: "3.3"
+
+services:
+  data-plane:
+    image: envoyproxy/envoy:v1.17.1
+    command: envoy --service-cluster xds_cluster --service-node xds-node -c data-plane/config.yaml
+    restart: unless-stopped
+    networks:
+      - sd-cluster
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "3000-3100:3000-3100"
+      - "9000:9000"
+    volumes:
+      - ./data-plane:/data-plane
+
+  control-plane:
+    image: golang:1.16-stretch
+    working_dir: /go/src/github.com/car12o/service-discovery-exp
+    command: make cp.dev
+    restart: unless-stopped
+    networks:
+      - sd-cluster
+    environment:
+      - ETCD_ENDPOINT=etcd:2379
+      - DEBUG=true
+    volumes:
+      - ./control-plane:/go/src/github.com/car12o/service-discovery-exp/control-plane
+      - ./Makefile:/go/src/github.com/car12o/service-discovery-exp/Makefile
+
+  etcd:
+    image: quay.io/coreos/etcd:v3.4.15
+    restart: unless-stopped
+    networks:
+      - sd-cluster
+    environment:
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+
+networks:
+  sd-cluster:

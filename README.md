@@ -1,2 +1,2 @@
-# service-discovery-exp
+# service-discovery-experiment
 service discovery experiment
