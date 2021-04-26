@@ -17,7 +17,7 @@ services:
 
   control-plane:
     image: golang:1.16-stretch
-    working_dir: /go/src/github.com/car12o/service-discovery-exp
+    working_dir: /go/src/service-discovery-exp
     command: make cp.dev
     restart: unless-stopped
     networks:
@@ -26,8 +26,8 @@ services:
       - ETCD_ENDPOINT=etcd:2379
       - DEBUG=true
     volumes:
-      - ./control-plane:/go/src/github.com/car12o/service-discovery-exp/control-plane
-      - ./Makefile:/go/src/github.com/car12o/service-discovery-exp/Makefile
+      - ./control-plane:/go/src/service-discovery-exp/control-plane
+      - ./Makefile:/go/src/service-discovery-exp/Makefile
 
   etcd:
     image: quay.io/coreos/etcd:v3.4.15
