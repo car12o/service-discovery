@@ -24,17 +24,17 @@ sv.build:
 
 sv.launch:
 ifeq ($(node),)
-	docker run --rm -it \
+	@docker run --rm -it \
 		-v $(shell pwd)/server/server:/go/bin/server \
-		--network=service-discovery-exp_sd-cluster \
+		--network=service-discovery_sd-cluster \
 		--network-alias=node0 \
 		-e LISTEN=$(listen) \
 		-e ETCD_ENDPOINT=etcd:2379 \
 		golang:1.16-stretch server
 else
-	docker run --rm -it \
+	@docker run --rm -it \
 		-v $(shell pwd)/server/server:/go/bin/server \
-		--network=service-discovery-exp_sd-cluster \
+		--network=service-discovery_sd-cluster \
 		--network-alias=$(node) \
 		-e NODE=$(node) \
 		-e LISTEN=$(listen) \
