@@ -23,11 +23,16 @@ sv.build:
 	@cd server && go build
 
 sv.launch:
-ifeq ($(shell [ -z $(node) ] || [ -z $(listen) ] && echo true),true)
-	@echo "Error: 'node' & 'listen' must be set: make node=node0 listen=80 sv.launch"
-	@exit 1
-endif
-	@docker run --rm -it \
+ifeq ($(node),)
+	docker run --rm -it \
+		-v $(shell pwd)/server/server:/go/bin/server \
+		--network=service-discovery-exp_sd-cluster \
+		--network-alias=node0 \
+		-e LISTEN=$(listen) \
+		-e ETCD_ENDPOINT=etcd:2379 \
+		golang:1.16-stretch server
+else
+	docker run --rm -it \
 		-v $(shell pwd)/server/server:/go/bin/server \
 		--network=service-discovery-exp_sd-cluster \
 		--network-alias=$(node) \
@@ -35,5 +40,6 @@ endif
 		-e LISTEN=$(listen) \
 		-e ETCD_ENDPOINT=etcd:2379 \
 		golang:1.16-stretch server
+endif
 
 sv.run: sv.build sv.launch
