@@ -16,7 +16,7 @@ type Config struct {
 func configFromEnv() *Config {
 	return &Config{
 		NodeID:       getenvOr("NODE_ID", "xds-node"),
-		Port:         getenvUint8Or("PORT", 5678),
+		Port:         getenvUintOr("PORT", 5678),
 		Debug:        getenvBoolOr("DEBUG", false),
 		EtcdEndpoint: getenvOr("ETCD_ENDPOINT", "0.0.0.0:2379"),
 	}
@@ -30,7 +30,7 @@ func getenvOr(env, defaultValue string) string {
 	return value
 }
 
-func getenvUint8Or(env string, defaultValue uint) uint {
+func getenvUintOr(env string, defaultValue uint) uint {
 	value := getenvOr(env, strconv.FormatUint(uint64(defaultValue), 10))
 	intValue, err := strconv.Atoi(value)
 	if err != nil {
